@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  python:
+    build:
+      context: ./docker/python
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    environment:
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+#      - FLASK_APP=app.py
+    stdin_open: true
+    tty: true
+    ports:
+      - '5002:5000'
+    command: flask run --debugger --reload -h 0.0.0.0
