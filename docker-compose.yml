@@ -1,18 +1,47 @@
 version: '2'
 
 services:
+  nginx:
+    image: nginx:1.14
+    volumes:
+      - ./docker/nginx/sites-enabled:/etc/nginx/conf.d
+      - ./www:/var/www
+    working_dir: /etc/nginx
+    tty: true
+    stdin_open: true
+    ports:
+      - '83:80'
+    depends_on:
+      - python
+
   python:
+    depends_on:
+      - mysql
     build:
       context: ./docker/python
-    working_dir: /var/www
+    working_dir: /srv/svoibudjet
     volumes:
-      - ./:/var/www
+      - ./srv:/srv
+      - ./docker/python/supervisor:/etc/supervisor/conf.d
     environment:
       - LC_ALL=C.UTF-8
       - LANG=C.UTF-8
-#      - FLASK_APP=app.py
     stdin_open: true
     tty: true
     ports:
-      - '5002:5000'
-    command: flask run --debugger --reload -h 0.0.0.0
+      - '8000:8000'
+    restart: always
+    command: python3 manage.py runserver 0.0.0.0:8000
+
+  mysql:
+    image: mysql:5.7
+    working_dir: /var/lib/mysql
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: svoibudjet
+      MYSQL_ROOT_HOST: 0.0.0.0
+    restart: always
+    volumes:
+      - ./mysql:/var/lib/mysql
