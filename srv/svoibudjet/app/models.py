@@ -14,7 +14,7 @@ class Check(models.Model):
 
 
 class Item(models.Model):
-    check = models.ForeignKey(Check, on_delete=models.CASCADE)
+    check_model = models.ForeignKey(Check, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     price = models.FloatField(null=False)
     quantity = models.FloatField(null=False)
