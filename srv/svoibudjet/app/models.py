@@ -19,3 +19,6 @@ class Item(models.Model):
     price = models.FloatField(null=False)
     quantity = models.FloatField(null=False)
     sum = models.FloatField(null=False)
+
+    def __str__(self):
+        return '%s  %d * %d' % (self.name, self.quantity, self.price)
