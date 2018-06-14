@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import transaction
 from io import BytesIO
 import json
-from telegram import Bot
+from telegram import Bot, error
 from time import sleep
 import os.path
 
@@ -21,7 +21,13 @@ class Command(BaseCommand):
         self.stdout.write("Start", ending='\n')
         offset = 0
         while True:
-            updates = bot.getUpdates(offset=offset)
+            try:
+                updates = bot.getUpdates(offset=offset)
+            except error.TimedOut as errorObj:
+                self.stdout.write('Error: [TimeOut] %s' % errorObj.message, ending='\n')
+                sleep(1)
+                continue
+
             for update in updates:
                 try:
                     update.message.document
