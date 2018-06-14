@@ -34,7 +34,7 @@ class Check(models.Model):
     updated_at = models.DateTimeField(null=False, auto_now=True)
 
     def __str__(self):
-        return '%s %s' % (self.shop.__str__(), self.date.isoformat())
+        return '%s %s' % (self.shop.__str__(), self.date)
 
 
 class Item(models.Model):
