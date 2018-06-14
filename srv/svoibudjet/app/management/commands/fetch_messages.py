@@ -7,6 +7,7 @@ from io import BytesIO
 import json
 from telegram import Bot
 from time import sleep
+import os.path
 
 
 class Command(BaseCommand):
@@ -15,23 +16,41 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        self.stdout.write("Start", ending='\n')
         bot = Bot('563615406:AAHG19VLOXuvfKIbbtlCjWmvp_zP64UzTPQ')
-        print(bot.getMe())
+
+        self.stdout.write("Start", ending='\n')
+        offset = 0
         while True:
-            for update in bot.getUpdates():
+            updates = bot.getUpdates(offset=offset)
+            for update in updates:
                 try:
                     update.message.document
                 except (KeyError, AttributeError):
                     continue
+
                 if not update.message.document:
                     continue
-                self.save_check(self.save_json(self.get_json_string(update)))
+
+                json_string = self.get_json_string(update)
+                json_data = self.save_json(json_string)
+                if not json_data:
+                    continue
+
+                self.save_check(json_data)
+
             sleep(1)
 
     def save_json(self, json_string):
         json_data = json.loads(json_string)
-        with open('/'.join((self.json_files_path, str(json_data['dateTime']) + '.json')), 'w+') as file:
+
+        if 'dateTime' not in json_data:
+            return None
+
+        if not os.path.isdir(self.json_files_path):
+            os.makedirs(self.json_files_path)
+
+        filename = str(json_data['dateTime']) + '.json'
+        with open(self.json_files_path + '/' + filename, 'w+') as file:
             file.write(json_string)
         return json_data
 
