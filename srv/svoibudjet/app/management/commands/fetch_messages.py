@@ -5,10 +5,10 @@ from django.conf import settings
 from django.db import transaction
 from io import BytesIO
 import json
+import os.path
 from telegram import Bot, error
 from time import sleep
-import os.path
-
+import traceback
 
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
@@ -22,9 +22,17 @@ class Command(BaseCommand):
         offset = 0
         while True:
             try:
-                updates = bot.getUpdates(offset=offset)
-            except error.TimedOut as errorObj:
-                self.stdout.write('Error: [TimeOut] %s' % errorObj.message, ending='\n')
+                updates = bot.getUpdates(offset=offset, timeout=15)
+            except (Exception, error.TimedOut) as ex:
+
+                self.stdout.write(
+                    "An exception of type {0} occurred. Arguments:\n{2!r}. Traceback: {1}".format(
+                        type(ex).__name__,
+                        traceback.format_exc(),
+                        ex.args
+                    ),
+                    ending='\n'
+                )
                 sleep(1)
                 continue
 
@@ -43,7 +51,7 @@ class Command(BaseCommand):
                     continue
 
                 self.save_check(json_data)
-
+            self.stdout.write('success', ending='\n')
             sleep(1)
 
     def save_json(self, json_string):
