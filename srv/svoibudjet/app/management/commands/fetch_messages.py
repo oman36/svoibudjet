@@ -10,49 +10,56 @@ from telegram import Bot, error
 from time import sleep
 import traceback
 
+
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
     json_files_path = settings.BASE_DIR + '/app/checks'
 
-    @transaction.atomic
     def handle(self, *args, **options):
         bot = Bot('563615406:AAHG19VLOXuvfKIbbtlCjWmvp_zP64UzTPQ')
 
         self.stdout.write("Start", ending='\n')
-        offset = 0
-        while True:
-            try:
-                updates = bot.getUpdates(offset=offset, timeout=15)
-            except (Exception, error.TimedOut) as ex:
 
-                self.stdout.write(
-                    "An exception of type {0} occurred. Arguments:\n{2!r}. Traceback: {1}".format(
-                        type(ex).__name__,
-                        traceback.format_exc(),
-                        ex.args
-                    ),
-                    ending='\n'
-                )
-                sleep(1)
+        while True:
+            self.fetch_messages(bot)
+
+    @transaction.atomic
+    def fetch_messages(self, bot):
+        try:
+            updates = bot.getUpdates(timeout=15)
+        except (Exception, error.TimedOut) as ex:
+            self.stdout.write(
+                "An exception of type {0} occurred. Arguments:\n{2!r}. Traceback: {1}".format(
+                    type(ex).__name__,
+                    traceback.format_exc(),
+                    ex.args
+                ),
+                ending='\n'
+            )
+            sleep(1)
+            return
+
+        self.stdout.write('count %d' % len(updates), ending='\n')
+        for update in updates:
+            try:
+                update.message.document
+            except (KeyError, AttributeError):
+                self.stdout.write('[%d] Update doesn\'t have message' % update.update_id, ending='\n')
                 continue
 
-            for update in updates:
-                try:
-                    update.message.document
-                except (KeyError, AttributeError):
-                    continue
+            if not update.message.document:
+                self.stdout.write('[%s] Message doesn\'t have document' % update.update_id, ending='\n')
+                continue
 
-                if not update.message.document:
-                    continue
+            json_string = self.get_json_string(update)
+            json_data = self.save_json(json_string)
+            if not json_data:
+                self.stdout.write('[%s] File not json' % update.update_id, ending='\n')
+                continue
 
-                json_string = self.get_json_string(update)
-                json_data = self.save_json(json_string)
-                if not json_data:
-                    continue
-
-                self.save_check(json_data)
-            self.stdout.write('success', ending='\n')
-            sleep(1)
+            self.save_check(json_data)
+        self.stdout.write('success', ending='\n')
+        sleep(1)
 
     def save_json(self, json_string):
         json_data = json.loads(json_string)
@@ -79,20 +86,22 @@ class Command(BaseCommand):
         date = datetime.fromtimestamp(data['dateTime']).isoformat()
         check = Check.objects.filter(date=date).first()
         if Check.objects.filter(date=date).first():
+            self.stdout.write('Check %d exists...' % check.id, ending='\n')
             return check
-        print('Saving %s...' % date)
+
+        self.stdout.write('Saving %s...' % date, ending='\n')
         shop = Shop.objects.filter(inn=data['userInn']).first()
         if not shop:
             shop = Shop()
             shop.inn = data['userInn']
-            shop.name = data['user']
+            shop.name = data['user'] or 'unknown'
             shop.save()
 
         check = Check()
         check.date = date
-        check.total_sum = data['totalSum']
-        check.discount = data['discount'] or 0
-        check.discount_sum = data['discountSum'] or 0
+        check.total_sum = (data['totalSum'] / 100)
+        check.discount = (data['discount'] / 100) or 0
+        check.discount_sum = (data['discountSum'] / 100) or 0
         check.shop = shop
         check.save()
 
