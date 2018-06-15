@@ -1,0 +1,22 @@
+{% if checks %}
+    <table>
+        {% for check in checks %}
+            <tr>
+                <th>{{ check.shop.name }}</th>
+                <th>{{ check.date }}</th>
+            </tr>
+            {% for check_item in check.item_set.all %}
+                <tr>
+                    {#            <a href="{% url 'app:detail' check_item.id %}">#}
+                    <td>{{ check_item.product.name }}</td>
+                    <td>{{ check_item.quantity }}</td>
+                    <td>{{ check_item.price }}</td>
+                    {#            </a>#}
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </table>
+    <b>Total:</b> {{ total }}
+{% else %}
+    <p>Checks not found.</p>
+{% endif %}
