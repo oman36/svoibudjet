@@ -99,9 +99,9 @@ class Command(BaseCommand):
 
         check = Check()
         check.date = date
-        check.total_sum = (data['totalSum'] / 100)
-        check.discount = (data['discount'] / 100) or 0
-        check.discount_sum = (data['discountSum'] / 100) or 0
+        check.total_sum = data['totalSum'] / 100
+        check.discount = (data['discount'] or 0) / 100
+        check.discount_sum = (data['discountSum'] or 0) / 100
         check.shop = shop
         check.save()
 
