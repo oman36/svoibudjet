@@ -12,5 +12,5 @@ def index(request):
 
     return render(request, 'app/index.html', {
         'checks': checks,
-        'total': total / 100
+        'total': total
     })

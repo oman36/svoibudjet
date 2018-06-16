@@ -28,6 +28,10 @@ class Command(BaseCommand):
         try:
             updates = bot.getUpdates(timeout=15)
         except (Exception, error.TimedOut) as ex:
+            self.stdout.write('#' * 79, ending='\n')
+            self.stdout.write(datetime.now().isoformat(), ending='\n')
+            self.stdout.write('-' * 79, ending='\n')
+
             self.stdout.write(
                 "An exception of type {0} occurred. Arguments:\n{2!r}. Traceback: {1}".format(
                     type(ex).__name__,
@@ -36,6 +40,10 @@ class Command(BaseCommand):
                 ),
                 ending='\n'
             )
+
+            self.stdout.write('-' * 79, ending='\n')
+            self.stdout.write(datetime.now().isoformat(), ending='\n')
+            self.stdout.write('#' * 79, ending='\n')
             sleep(1)
             return
 
