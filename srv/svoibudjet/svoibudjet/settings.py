@@ -26,8 +26,9 @@ SECRET_KEY = '#ta(5z4!gd6_1ya5*!o$b+lk(d9m78_8m+w0r8@kh2ttf(y*&k'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'python',
-    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+    'svoibudjet.tk',
 ]
 
 
@@ -129,3 +130,11 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www'
+
+JSON_FILES_PATH = os.path.join(BASE_DIR, 'app/checks')
+
+CHECKS_API = {
+    'endpoint': 'https://proverkacheka.nalog.ru:9999/',
+    'username': os.environ.get('CHECKS_API_USERNAME', None),
+    'password': os.environ.get('CHECKS_API_PASSWORD', None),
+}

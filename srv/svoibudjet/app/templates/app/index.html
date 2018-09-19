@@ -1,66 +1,15 @@
 {% extends "app/layout.html" %}
 {% block content %}
-    {% if checks %}
-        <br>
-        <div class="card">
-            <div class="card-body">
-                <b>Итого:</b> {{ total }}
-            </div>
-        </div>
-        <br>
-        {% for check in checks %}
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            {% if check.shop.name and 'unknown' != check.shop.name %}
-                                {{ check.shop.name }}
-                            {% else %}
-                                ИНН: {{ check.shop.inn }}
-                            {% endif %}
-                        </div>
-                        <div class="col text-right">
-                            {{ check.date.ctime}}
-                        </div>
-                        <div class="col-1">
-                            <div class="btn btn-info btn-sm"
-                                 data-toggle="collapse"
-                                 href="#list{{ check.id }}"
-                                 role="button"
-                                 aria-expanded="false"
-                                 aria-controls="collapseExample"
-                            >
-                                Список
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-body collapse" id="list{{ check.id }}">
-                    <ul>
-                        <li class="row" style="font-weight: bold; border-bottom: dashed 1px #ccc">
-                            <div class="col">Наименование</div>
-                            <div class="col text-right">Количество</div>
-                            <div class="col text-right">Цена</div>
-                            <div class="col text-right">Стоимость</div>
-                        </li>
-                        {% for check_item in check.item_set.all %}
-                            <li class="row" style="border-bottom: dashed 1px #ccc">
-                                <div class="col">{{ check_item.product.name }}</div>
-                                <div class="col text-right">{{ check_item.quantity }} </div>
-                                <div class="col text-right">{{ check_item.price }}</div>
-                                <div class="col text-right">{{ check_item.sum }}</div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <b>Итого:</b> {{ check.total_sum }}
-                </div>
-            </div>
-            <br>
-        {% endfor %}
-    {% else %}
-        <p>Checks not found.</p>
-    {% endif %}
+    <ul class="list-group">
+      <li class="list-group-item">
+          <a href="{% url 'app:new_check' %}">
+              Add Check
+          </a>
+      </li>
+      <li class="list-group-item">
+          <a href="{% url 'app:search' %}">
+              Check list
+          </a>
+      </li>
+    </ul>
 {% endblock %}

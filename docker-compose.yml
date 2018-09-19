@@ -26,6 +26,8 @@ services:
     environment:
       - LC_ALL=C.UTF-8
       - LANG=C.UTF-8
+    env_file:
+      - .env
     stdin_open: true
     tty: true
     ports:

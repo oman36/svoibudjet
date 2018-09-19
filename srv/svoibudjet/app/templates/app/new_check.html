@@ -1,0 +1,24 @@
+{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+    <form action="{% url 'app:add' %}" id="add_check_form" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="qr_code_data">
+                Data from QR code
+            </label>
+            <div class="alert alert-danger" style="display: none;" role="alert" id="error">Error</div>
+            <div class="alert alert-success" style="display: none;" role="alert" id="success">Saved</div>
+            <input type="text" name="qr_code_data" class="form-control" id="qr_code_data" aria-describedby="qr_code_help"
+                   placeholder="t=20180913T1449&s=468.03&fn=8710000101915576&i=4029&fp=774042432&n=1">
+            <small id="qr_code_help" class="form-text text-muted">
+                t={Date}&s={Total_sum}&fn={FN}&i={FD}&fp={FP}&n=1
+            </small>
+            <button type="submit" class="btn btn-primary">Get</button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'app/js/scripts.js' %}"></script>
+{% endblock %}
