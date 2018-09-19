@@ -32,8 +32,8 @@ def save_check(data, stdout=None):
     check = Check()
     check.date = date
     check.total_sum = data['totalSum'] / 100
-    check.discount = (data['discount'] or 0) / 100
-    check.discount_sum = (data['discountSum'] or 0) / 100
+    check.discount = data.get('discount', 0) / 100
+    check.discount_sum = data.get('discountSum',0) / 100
     check.shop = shop
     check.save()
 
