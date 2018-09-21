@@ -138,3 +138,40 @@ CHECKS_API = {
     'username': os.environ.get('CHECKS_API_USERNAME', None),
     'password': os.environ.get('CHECKS_API_PASSWORD', None),
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname}|{module}|p:{process:d}|t:{thread:d}| {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'warning_file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/warning.log'),
+            'formatter': 'verbose',
+        },
+        'custom_debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/custom_debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['warning_file'],
+            'propagate': True,
+        },
+        'custom_debug': {
+            'handlers': ['custom_debug'],
+        }
+    },
+}

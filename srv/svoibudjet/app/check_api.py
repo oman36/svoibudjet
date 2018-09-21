@@ -1,7 +1,10 @@
-import requests
+import logging
 from urllib.parse import parse_qs
 
+import requests
 from django.conf import settings
+
+logger = logging.getLogger('custom_debug')
 
 
 class API:
@@ -16,7 +19,9 @@ class API:
         }
 
     def get_json(self, query_str):
-        query = {k: v[0] for k, v in parse_qs(query_str).items()}
+        query = self.__parse_query(query_str)
+        if None is query:
+            return False
 
         uri = 'v1/inns/*/kkts/*/fss/{fn}/tickets/{fd}'.format(fn=query['fn'], fd=query['i'])
         params = {
@@ -36,7 +41,9 @@ class API:
         return response.text
 
     def check(self, query_str):
-        query = {k: v[0] for k, v in parse_qs(query_str).items()}
+        query = self.__parse_query(query_str)
+        if None is query:
+            return False
 
         uri = 'v1/ofds/*/inns/*/fss/{fn}/operations/1/tickets/{fd}'.format(fn=query['fn'], fd=query['i'])
         date = query['t']
@@ -54,16 +61,15 @@ class API:
             auth=(self.username, self.password)
         )
 
-        import logging
-        import datetime
-        logger = logging.Logger('f')
-        logger.handlers.append(logging.FileHandler('debug.log'))
-        def log(*msg):
-            for m in msg:
-                logger.debug('[%s] %s' % (datetime.datetime.isoformat(datetime.datetime.now()), repr(m)))
-        log(self.__build_url(uri) + '?' +  '&'.join([str(key) + '=' + str(val) for key, val in params.items()]))
         return response.status_code == 204
 
+    def __parse_query(self, query_str):
+        query = {k: v[0] for k, v in parse_qs(query_str).items()}
+        if {'i', 'fn', 't', 'fp', 's'} - set(query.keys()):
+            logger.debug('invalid query_str: ' + query_str)
+
+            return None
+        return query
 
     def __build_url(self, uri):
         return self.endpoint + (uri[1:] if uri[:1] == '/' else uri)

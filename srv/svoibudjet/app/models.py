@@ -48,3 +48,14 @@ class Item(models.Model):
 
     def __str__(self):
         return '%s  %.3f x %.2f' % (self.product.name, self.quantity, self.price)
+
+
+class QRData(models.Model):
+    check_model = models.ForeignKey(Check, on_delete=models.SET_NULL, null=True)
+    qr_string = models.CharField(max_length=255, null=False)
+    is_valid = models.BooleanField(default=True)
+    created_at = models.DateTimeField(null=False, auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(null=False, auto_now=True)
+
+    def __str__(self):
+        return str(self.qr_string)

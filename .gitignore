@@ -4,4 +4,4 @@ __pycache__
 /mysql/*
 /srv/svoibudjet/app/checks/*
 .env
-.log
+*.log

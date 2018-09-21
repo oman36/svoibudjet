@@ -1,4 +1,5 @@
 import json
+import logging
 import os.path
 import re
 from datetime import datetime
@@ -6,6 +7,8 @@ from datetime import datetime
 from django.conf import settings
 
 from .models import Check, Item, Shop, Product
+
+logger = logging.getLogger('custom_debug')
 
 
 def save_check(data, stdout=None):
@@ -70,6 +73,7 @@ def save_json(json_string):
         json_data = json_data['document']['receipt']
 
     if 'dateTime' not in json_data:
+        logger.debug('Json data does not have dateTime: ' + str(json_string))
         return None
 
     if not os.path.isdir(json_files_path):
