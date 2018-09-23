@@ -67,7 +67,10 @@ def save_item(check, item_data):
 
 def save_json(json_string):
     json_files_path = settings.JSON_FILES_PATH
-    json_data = json.loads(json_string)
+    try:
+        json_data = json.loads(json_string)
+    except json.JSONDecodeError:
+        logger.debug('Invalid json ' + str(json_string))
 
     if 'document' in json_data:
         json_data = json_data['document']['receipt']
