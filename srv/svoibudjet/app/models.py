@@ -28,7 +28,7 @@ class Check(models.Model):
     date = models.DateTimeField(null=False, unique=True)
     discount = models.FloatField(default=0)
     discount_sum = models.FloatField(default=0)
-    total_sum = models.IntegerField(null=False)
+    total_sum = models.FloatField(null=False)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     created_at = models.DateTimeField(null=False, auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(null=False, auto_now=True)
