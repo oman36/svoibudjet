@@ -12,7 +12,7 @@ logger = logging.getLogger('custom_debug')
 
 
 def save_check(data, stdout=None):
-    if re.match('^\d+$', data['dateTime']):
+    if isinstance(data['dateTime'], int) or re.match('^\d+$', data['dateTime']):
         date = datetime.fromtimestamp(data['dateTime']).isoformat()
     else:
         date = data['dateTime']
@@ -35,8 +35,8 @@ def save_check(data, stdout=None):
     check = Check()
     check.date = date
     check.total_sum = data['totalSum'] / 100
-    check.discount = data.get('discount', 0) / 100
-    check.discount_sum = data.get('discountSum',0) / 100
+    check.discount = data.get('discount', 0) or 0 / 100
+    check.discount_sum = data.get('discountSum', 0) or 0 / 100
     check.shop = shop
     check.save()
 

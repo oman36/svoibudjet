@@ -68,7 +68,15 @@ class Command(BaseCommand):
 
     def get_json_string(self, update):
         byte_array = BytesIO()
-        update.message.document.get_file().download(out=byte_array)
+        tries = 0
+        while tries < 5:
+            try:
+                update.message.document.get_file().download(out=byte_array)
+                break
+            except error.TimedOut:
+                byte_array = BytesIO()
+                tries += 1
+
         byte_array.seek(0)
 
         return byte_array.read().decode('utf8')
