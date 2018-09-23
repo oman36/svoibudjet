@@ -70,7 +70,7 @@ def save_json(json_string):
     try:
         json_data = json.loads(json_string)
     except json.JSONDecodeError:
-        logger.debug('Invalid json ' + str(json_string))
+        logger.log(logging.DEBUG, 'Invalid json :' + str(json_string.__class__) + repr(json_string))
         return None
 
     if 'document' in json_data:

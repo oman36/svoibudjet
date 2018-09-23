@@ -163,15 +163,18 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/custom_debug.log'),
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
             'handlers': ['warning_file'],
-            'propagate': True,
+            'propagate': False,
         },
         'custom_debug': {
             'handlers': ['custom_debug'],
+            'level': 'DEBUG',
+            'propagate': True,
         }
     },
 }

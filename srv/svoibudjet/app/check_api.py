@@ -38,6 +38,10 @@ class API:
 
         response.raise_for_status()
 
+        if response.status_code != 200:
+            logger.debug('Returned status code %d with massage: %s', (response.status_code, response.text))
+            return False
+
         return response.text
 
     def check(self, query_str):

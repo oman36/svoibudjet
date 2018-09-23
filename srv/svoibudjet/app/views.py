@@ -63,6 +63,11 @@ def add(request):
     qr_data.is_valid = True
     json = api.get_json(request.POST['qr_code_data'])
 
+    if json is False:
+        return JsonResponse({
+            'message': 'Can not get json from api',
+        }, status=406)
+
     data = save_json(json)
 
     if data is None:
