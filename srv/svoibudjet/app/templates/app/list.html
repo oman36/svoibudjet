@@ -12,17 +12,17 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col">
+                        <div class="col col-md-6">
                             {% if check.shop.name and 'unknown' != check.shop.name %}
                                 {{ check.shop.name }}
                             {% else %}
                                 ИНН: {{ check.shop.inn }}
                             {% endif %}
                         </div>
-                        <div class="col text-right">
-                            {{ check.date.ctime}}
+                        <div class="col col-md-6 text-right">
+                            {{ check.date|date:'d/m/Y H:i'}}
                         </div>
-                        <div class="col-1">
+                        <div class="col text-right">
                             <div class="btn btn-info btn-sm"
                                  data-toggle="collapse"
                                  href="#list{{ check.id }}"
@@ -39,22 +39,22 @@
                 <div class="card-body collapse" id="list{{ check.id }}">
                     <ul>
                         <li class="row" style="font-weight: bold; border-bottom: dashed 1px #ccc">
-                            <div class="col">Наименование</div>
-                            <div class="col text-right">Количество</div>
-                            <div class="col text-right">Цена</div>
+                            <div class="col col-12 col-md-6">Наименование</div>
+                            <div class="col text-right">Кол-во x Цена = </div>
                             <div class="col text-right">Стоимость</div>
                         </li>
                         {% for check_item in check.item_set.all %}
                             <li class="row" style="border-bottom: dashed 1px #ccc">
-                                <div class="col">{{ check_item.product.name }}</div>
-                                <div class="col text-right">{{ check_item.quantity }} </div>
-                                <div class="col text-right">{{ check_item.price }}</div>
+                                <div class="col col-12 col-md-6">{{ check_item.product.name }}</div>
+                                <div class="col col-2 col-md-12"></div>
+                                <div class="col text-right">{{ check_item.quantity }} x {{ check_item.price }} = </div>
+
                                 <div class="col text-right">{{ check_item.sum }}</div>
                             </li>
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer text-right">
                     <b>Итого:</b> {{ check.total_sum }}
                 </div>
             </div>
