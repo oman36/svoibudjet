@@ -71,6 +71,7 @@ def save_json(json_string):
         json_data = json.loads(json_string)
     except json.JSONDecodeError:
         logger.debug('Invalid json ' + str(json_string))
+        return None
 
     if 'document' in json_data:
         json_data = json_data['document']['receipt']
