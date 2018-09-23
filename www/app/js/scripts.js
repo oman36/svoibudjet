@@ -29,7 +29,7 @@
                     }, 1400)
                 },
                 error: function (err) {
-                    $error.html(err.message || 'server error').show();
+                    $error.html(err.responseJSON.message || 'server error').show();
                 }
             });
         })
