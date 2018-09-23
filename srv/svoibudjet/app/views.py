@@ -24,7 +24,6 @@ def search(request):
 
     return render(request, 'app/list.html', {
         'checks': checks,
-        'total': queryset.aggregate(sum=models.Sum('total_sum'))['sum'],
         'num_pages': paginator.num_pages,
     })
 

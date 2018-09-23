@@ -1,13 +1,6 @@
 {% extends "app/layout.html" %}
 {% block content %}
     {% if checks %}
-        <br>
-        <div class="card">
-            <div class="card-body">
-                <b>Итого:</b> {{ total }}
-            </div>
-        </div>
-        <br>
         {% for check in checks %}
             <div class="card">
                 <div class="card-header">
@@ -60,15 +53,11 @@
             </div>
             <br>
         {% endfor %}
-        <div class="btn-block">
-            {% if request.GET.page > '1' %}
-                <a class="btn btn-info" href="/?page={{ request.GET.page|add:-1}}">{{ request.GET.page|add:-1 }}</a>
-            {% endif %}
-            <span  class="btn" href="/?page={{ request.GET.page}}">{{ request.GET.page }}</span>
-            {% if request.GET.page|add:0 < num_pages %}
-                <a class="btn btn-info" href="/?page={{ request.GET.page|add:1 }}">{{ request.GET.page|add:1 }}</a>
-            {% endif %}
-        </div>
+        {% with 'app:search' as page_url  %}
+        {% with request.GET.page|default:1|add:0 as page  %}
+            {% include 'app/paginator.html' %}
+        {% endwith %}
+        {% endwith %}
     {% else %}
         <p>Checks not found.</p>
     {% endif %}

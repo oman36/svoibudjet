@@ -1,0 +1,15 @@
+<div class="btn-block text-center">
+    {% if page > 2 %}
+        <a class="btn btn-outline-info" href="{% url page_url %}?page={{ page|add:-2 }}">{{ page|add:-2 }}</a>
+    {% endif %}
+    {% if page > 1 %}
+        <a class="btn btn-outline-info" href="{% url page_url %}?page={{ page|add:-1 }}">{{ page|add:-1 }}</a>
+    {% endif %}
+    <span class="btn btn-info" href="{% url page_url %}?page={{ page }}">{{ page }}</span>
+    {% if page < num_pages %}
+        <a class="btn btn-outline-info" href="{% url page_url %}?page={{ page|add:1}}">{{ page|add:1 }}</a>
+    {% endif %}
+    {% if page < num_pages|add:-1 %}
+        <a class="btn btn-outline-info" href="{% url page_url %}?page={{ page|add:2}}">{{ page|add:2 }}</a>
+    {% endif %}
+</div>
