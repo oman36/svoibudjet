@@ -38,8 +38,18 @@ class API:
 
         response.raise_for_status()
 
+        tries = 0
+
+        while response.status_code == 202 and tries < 5:
+            response = requests.get(
+                self.__build_url(uri),
+                params=params,
+                headers=self.headers,
+                auth=(self.username, self.password)
+            )
+
         if response.status_code != 200:
-            logger.debug('Returned status code %d with massage: %s', (response.status_code, response.text))
+            logger.debug('Returned status code %d with massage: %s' % (response.status_code, response.text))
             return False
 
         return response.text
