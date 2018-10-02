@@ -7,4 +7,5 @@ urlpatterns = [
     path('search', views.search, name='search'),
     path('new_check', views.new_check, name='new_check'),
     path('add', views.add, name='add'),
+    path('get_qr_data_list', views.get_qr_data_list, name='get_qr_data_list'),
 ]

@@ -1,0 +1,6 @@
+{% for qr_data in qr_data_list %}
+    <tr class="table-{% if qr_data.check_model__id %}success{% else %}danger{% endif %}" data-id="{{ qr_data.id }}">
+        <td>{{ qr_data.qr_string }}</td>
+        <td>{{ qr_data.created_at|date:'d/m/Y H:i:s' }}</td>
+    </tr>
+{% endfor %}

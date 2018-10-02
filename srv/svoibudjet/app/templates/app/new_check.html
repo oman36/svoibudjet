@@ -9,7 +9,8 @@
             </label>
             <div class="alert alert-danger" style="display: none;" role="alert" id="error">Error</div>
             <div class="alert alert-success" style="display: none;" role="alert" id="success">Saved</div>
-            <input type="text" name="qr_code_data" class="form-control" id="qr_code_data" aria-describedby="qr_code_help" autocomplete="off"
+            <input type="text" name="qr_code_data" class="form-control" id="qr_code_data"
+                   aria-describedby="qr_code_help" autocomplete="off"
                    placeholder="t=20180913T1449&s=468.03&fn=8710000101915576&i=4029&fp=774042432&n=1">
             <small id="qr_code_help" class="form-text text-muted">
                 t={Date}&s={Total_sum}&fn={FN}&i={FD}&fp={FP}&n=1
@@ -17,6 +18,23 @@
             <button type="submit" class="btn btn-primary">Get</button>
         </div>
     </form>
+    <br>
+    <br>
+    <div class="progress" style="height: 2px;">
+        <div class="progress-bar" id="qr_code_progress" role="progressbar" style="width: 1%;transition: width .15s ease;" aria-valuenow="1" aria-valuemin="0"
+             aria-valuemax="100">   </div>
+    </div>
+    <table class="table table-sm table-striped">
+        <thead>
+        <tr>
+            <th scope="col">QR string</th>
+            <th scope="col">Date</th>
+        </tr>
+        </thead>
+        <tbody id="qr_code_list" data-url="{% url 'app:get_qr_data_list' %}">
+        {% include 'app/parts/qr_data_list.html' %}
+        </tbody>
+    </table>
 {% endblock %}
 
 {% block scripts %}

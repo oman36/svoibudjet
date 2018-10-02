@@ -1,10 +1,11 @@
 import logging
 
 from django.core.paginator import Paginator, EmptyPage
-from django.db import models, transaction
+from django.db import transaction
 from django.forms import model_to_dict
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
+from django.template.loader import render_to_string
 
 from .check_api import API
 from .models import Check, Item, QRData
@@ -23,7 +24,7 @@ def search(request):
         raise Http404()
 
     return render(request, 'app/list.html', {
-        'checks': checks,
+        'checks'   : checks,
         'num_pages': paginator.num_pages,
     })
 
@@ -33,7 +34,23 @@ def index(request):
 
 
 def new_check(request):
-    return render(request, 'app/new_check.html')
+    qr_data_list = QRData.objects\
+        .values('id', 'check_model__id', 'qr_string', 'created_at', )\
+        .order_by('-created_at')[:10]
+
+    return render(request, 'app/new_check.html', {
+        'qr_data_list': qr_data_list,
+    })
+
+
+def get_qr_data_list(request):
+    qr_data_list = QRData.objects\
+        .values('id', 'check_model__id', 'qr_string', 'created_at', )\
+        .order_by('-created_at')[:10]
+
+    return render(request, 'app/parts/qr_data_list.html', {
+        'qr_data_list': qr_data_list,
+    })
 
 
 @transaction.atomic
@@ -82,6 +99,6 @@ def add(request):
 
     return JsonResponse({
         'message': 'ok',
-        'check': model_to_dict(check),
-        'items': list(Item.objects.filter(check_model=check).values())
+        'check'  : model_to_dict(check),
+        'items'  : list(Item.objects.filter(check_model=check).values())
     })
