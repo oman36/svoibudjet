@@ -60,7 +60,7 @@ def add(request):
             'message': 'Method not allowed',
         }, status=405)
 
-    if 'qr_code_data' not in request.POST:
+    if 'qr_code_data' not in request.POST or not request.POST['qr_code_data']:
         return JsonResponse({
             'message': 'Data from QR code is required',
         }, status=400)
@@ -78,7 +78,7 @@ def add(request):
         }, status=406)
 
     qr_data.is_valid = True
-    json = api.get_json(request.POST['qr_code_data'])
+    json = api.get_json(qr_data.qr_string)
 
     if json is False:
         return JsonResponse({
