@@ -29,7 +29,7 @@ def save_check(data, stdout=None):
     if not shop:
         shop = Shop()
         shop.inn = data['userInn']
-        shop.name = data['user'] or 'unknown'
+        shop.name = data.get('user', 'unknown')
         shop.save()
 
     check = Check()
