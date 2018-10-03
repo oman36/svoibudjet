@@ -35,7 +35,7 @@ def index(request):
 
 def new_check(request):
     qr_data_list = QRData.objects\
-        .values('id', 'check_model__id', 'qr_string', 'created_at', )\
+        .values('id', 'check_model__id', 'qr_string', 'created_at', 'is_valid')\
         .order_by('-created_at')[:10]
 
     return render(request, 'app/new_check.html', {
@@ -45,7 +45,7 @@ def new_check(request):
 
 def get_qr_data_list(request):
     qr_data_list = QRData.objects\
-        .values('id', 'check_model__id', 'qr_string', 'created_at', )\
+        .values('id', 'check_model__id', 'qr_string', 'created_at', 'is_valid')\
         .order_by('-created_at')[:10]
 
     return render(request, 'app/parts/qr_data_list.html', {
