@@ -36,8 +36,6 @@ class API:
             auth=(self.username, self.password)
         )
 
-        response.raise_for_status()
-
         tries = 0
 
         while response.status_code == 202 and tries < 5:
