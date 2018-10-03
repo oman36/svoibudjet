@@ -21,6 +21,7 @@
                 processData: false,
                 complete: function () {
                     $btn.removeAttr('disabled');
+                    updateQrList();
                 },
                 success: function (data) {
                     $success.show();
@@ -40,11 +41,11 @@
         var updateQrList = (function () {
             var $list = $('#qr_code_list');
             var url = $list.data('url');
-            console.log(url);
             return function () {
                 $qr_code_progress.data('next', new Date().getTime() + qrUpdateTimeout);
+
                 $.get(url, function (response) {
-                    console.log(response);
+                    $list.html(response)
                 })
             }
         })();
