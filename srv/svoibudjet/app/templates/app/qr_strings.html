@@ -1,0 +1,45 @@
+{% extends "app/layout.html" %}
+{% block content %}
+    {% if strings %}
+        <div id="qr_strings">
+            {% for string in strings %}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row qr_string" data-id="{{ string.id }}">
+                            <div class="col-md-6 col-sm-12" style="overflow: auto;" data-original="{{ string.qr_string }}">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="text" value="{{ string.qr_string }}" style="width: 100%; border: none;">
+                                    <div class="col text-right">
+                                        <div class="btn btn-sm btn-outline-info delete-qr-data  d-none">
+                                            save
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="d-md-none">
+                            </div>
+                            <div class="col-md-3 col-6 text-{% if string.is_valid %}success{% else %}danger{% endif %}">
+                                {% if string.is_valid %} Valid {% else %} Not Valid {% endif %}
+                            </div>
+                            <div class="col-md-3 col-6 text-right">
+
+                                <div class="btn btn-sm btn-danger delete-qr-data d-none">
+                                    Delete
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            {% endfor %}
+        </div>
+        {% with 'app:qr_strings' as page_url %}
+            {% with request.GET.page|default:1|add:0 as page %}
+                {% include 'app/paginator.html' %}
+            {% endwith %}
+        {% endwith %}
+    {% else %}
+        <p>Checks not found.</p>
+    {% endif %}
+{% endblock %}

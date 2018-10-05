@@ -99,3 +99,17 @@ def add(request):
         'check'  : model_to_dict(check),
         'items'  : list(Item.objects.filter(check_model=check).values())
     })
+
+
+def qr_strings(request):
+    queryset = QRData.objects.order_by('-created_at')
+    paginator = Paginator(queryset, request.GET.get('per-page', 10))
+    try:
+        strings = paginator.page(request.GET.get('page', 1))
+    except EmptyPage:
+        raise Http404()
+
+    return render(request, 'app/qr_strings.html', {
+        'strings'   : strings,
+        'num_pages': paginator.num_pages,
+    })
