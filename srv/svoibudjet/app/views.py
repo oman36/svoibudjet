@@ -1,11 +1,9 @@
 import logging
 
 from django.core.paginator import Paginator, EmptyPage
-from django.db import transaction
 from django.forms import model_to_dict
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
-from django.template.loader import render_to_string
 
 from .check_api import API
 from .models import Check, Item, QRData
@@ -53,7 +51,6 @@ def get_qr_data_list(request):
     })
 
 
-@transaction.atomic
 def add(request):
     if request.method != 'POST':
         return JsonResponse({

@@ -5,12 +5,14 @@ import re
 from datetime import datetime
 
 from django.conf import settings
+from django.db import transaction
 
 from .models import Check, Item, Shop, Product
 
 logger = logging.getLogger('custom_debug')
 
 
+@transaction.atomic
 def save_check(data, stdout=None):
     if isinstance(data['dateTime'], int) or re.match('^\d+$', data['dateTime']):
         date = datetime.fromtimestamp(data['dateTime']).isoformat()
@@ -43,11 +45,12 @@ def save_check(data, stdout=None):
     for item in data['items']:
         save_item(check, item)
 
-    print('Check %s was saved' % check)
+    logger.debug('Check %s was saved' % check)
     return check
 
 
 def save_item(check, item_data):
+    item_data['name'] = item_data.get('name', 'unknown_%d' % (Product.objects.filter( shop=check.shop).count() + 1))
     product = Product.objects.filter(name=item_data['name'], shop=check.shop).first()
     if not product:
         product = Product()
