@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from decimal import Decimal
 import logging
 from urllib.parse import parse_qs
@@ -70,19 +71,36 @@ class API:
         date = query['t']
         params = {
             'fiscalSign': query['fp'],
-            'date': '{y}-{m}-{d}T{h}:{i}:00'.format(
-                y=date[:4], m=date[4:6], d=date[6:8], h=date[9:11], i=date[11:13]),
             'sum': int(Decimal(query['s']) * 100)
         }
 
-        response = requests.get(
-            self.__build_url(uri),
-            params=params,
-            headers=self.headers,
-            auth=(self.username, self.password)
+        original_date = datetime(
+            year=int(date[:4]),
+            month=int(date[4:6]),
+            day=int(date[6:8]),
+            hour=int(date[9:11]),
+            minute=int(date[11:13]),
         )
 
-        return response.status_code == 204
+        # hack. Because provider may save wrong time.
+        dates_list = [
+            original_date,
+            original_date - timedelta(minutes=1),
+            original_date + timedelta(minutes=1)
+        ]
+        for next_date in dates_list:
+            params['date'] = next_date.strftime('%Y-%m-%dT%H:%M:00')
+            response = requests.get(
+                self.__build_url(uri),
+                params=params,
+                headers=self.headers,
+                auth=(self.username, self.password)
+            )
+
+            if response.status_code == 204:
+                return True
+
+        return False
 
     def __parse_query(self, query_str):
         query = {k: v[0] for k, v in parse_qs(query_str).items()}
