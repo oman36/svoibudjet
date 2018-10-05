@@ -66,7 +66,7 @@ class API:
         if None is query:
             return False
 
-        uri = 'v1/ofds/*/inns/*/fss/{fn}/operations/1/tickets/{fd}'.format(fn=query['fn'], fd=query['i'])
+        uri = 'v1/ofds/*/inns/*/fss/{fn}/operations/{n}/tickets/{fd}'.format(fn=query['fn'], fd=query['i'], n=query['n'])
         date = query['t']
         params = {
             'fiscalSign': query['fp'],
