@@ -57,12 +57,12 @@ def add(request):
             'message': 'Method not allowed',
         }, status=405)
 
-    if 'qr_code_data' not in request.POST or not request.POST['qr_code_data']:
+    if 'qr_code_data' not in request.POST or not request.POST['qr_code_data'].strip():
         return JsonResponse({
             'message': 'Data from QR code is required',
         }, status=400)
 
-    qr_data, created = QRData.objects.get_or_create(qr_string=request.POST['qr_code_data'])
+    qr_data, created = QRData.objects.get_or_create(qr_string=request.POST['qr_code_data'].strip())
 
     api = API()
 
