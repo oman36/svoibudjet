@@ -1,3 +1,4 @@
+from decimal import Decimal
 import logging
 from urllib.parse import parse_qs
 
@@ -71,7 +72,7 @@ class API:
             'fiscalSign': query['fp'],
             'date': '{y}-{m}-{d}T{h}:{i}:00'.format(
                 y=date[:4], m=date[4:6], d=date[6:8], h=date[9:11], i=date[11:13]),
-            'sum': int(float(query['s']) * 100)
+            'sum': int(Decimal(query['s']) * 100)
         }
 
         response = requests.get(
