@@ -141,6 +141,12 @@ def update_qr_string(request, model_id):
         }, status=400)
 
     string.qr_string = request.POST['qr_string'].strip()
+
+    if QRData.objects.filter(qr_string=string.qr_string).exists():
+        return JsonResponse({
+            'message': 'qr_string "%s" already exist' % string.qr_string,
+        }, status=400)
+
     string.save()
 
     return JsonResponse({
