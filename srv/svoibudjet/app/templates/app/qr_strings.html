@@ -4,21 +4,27 @@
     {% if strings %}
         <div id="qr_strings">
             {% for string in strings %}
-                <div class="card qr_string"  data-id="{{ string.id }}">
+                <div class="card qr_string" data-id="{{ string.id }}">
                     <div class="card-body">
                         <div class="row ">
                             <div class="col-md-8 col-sm-12">
-                                <form action="">
+                                <form action="{% url 'app:update_qr_string' model_id=string.id %}" method="POST" class="update-qr-string">
+                                    {% csrf_token %}
                                     <div class="row">
-                                        <div class="col-12">
-                                            <input type="text" value="{{ string.qr_string }}"
-                                                   data-original="{{ string.qr_string }}" style="width: 100%; border: none; border-bottom: 1px solid #ccc;"
-                                                   class="qr-string-input">
+                                        <div class="col-10">
+                                            <input
+                                                    type="text"
+                                                    name="qr_string"
+                                                    value="{{ string.qr_string }}"
+                                                    data-original="{{ string.qr_string }}"
+                                                    style="width: 100%; border: none; border-bottom: 1px solid #ccc;"
+                                                    class="qr-string-input"
+                                            >
                                         </div>
-                                        <div class="col text-right">
-                                            <div class="btn btn-sm btn-outline-info save-qr-data  d-none">
+                                        <div class="col-2 text-right">
+                                            <button type="submit" class="btn btn-sm btn-outline-info">
                                                 save
-                                            </div>
+                                            </button>
                                         </div>
                                     </div>
                                 </form>

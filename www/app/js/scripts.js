@@ -86,7 +86,6 @@ function alertUnknownError(resoponse) {
         if (is_route('qr_strings', 'app')) {
             $('.qr_string').each(function (n, el) {
                 var $qrString = $(el);
-                var id = $qrString.data('id');
                 var $qrStringInput = $('.qr-string-input', $qrString);
 
                 $('.delete-qr-data', $qrString).on('submit', function (e) {
@@ -109,7 +108,38 @@ function alertUnknownError(resoponse) {
                         },
                         error: alertUnknownError
                     });
+                });
 
+                $('.update-qr-string', $qrString).on('submit', function (e) {
+                    e.preventDefault();
+
+                    if ($qrStringInput.data('original') === $qrStringInput.val()) {
+                        return this;
+                    }
+
+                    if (!confirm('Change ' + $qrStringInput.data('original') + ' to ' + $qrStringInput.val() + ' ?')) {
+                        return this;
+                    }
+
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: $(this).attr('method'),
+                        data: new FormData(this),
+                        dataType: 'json',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function () {
+                            $qrStringInput.data('original', $qrStringInput.val());
+                        },
+                        error: function(response) {
+                            if (response.responseJSON && response.responseJSON.message) {
+                                return alert(response.responseJSON.message)
+                            }
+
+                            alertUnknownError(response)
+                        }
+                    });
                 });
             })
         }

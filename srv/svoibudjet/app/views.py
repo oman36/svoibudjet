@@ -127,3 +127,22 @@ def delete_qr_string(request, model_id):
     return JsonResponse({
         'success': True,
     })
+
+
+def update_qr_string(request, model_id):
+    try:
+        string = QRData.objects.get(id=model_id)
+    except QRData.DoesNotExist:
+        raise Http404()
+
+    if 'qr_string' not in request.POST or not request.POST['qr_string'].strip():
+        return JsonResponse({
+            'message': 'qr_string is required',
+        }, status=400)
+
+    string.qr_string = request.POST['qr_string'].strip()
+    string.save()
+
+    return JsonResponse({
+        'success': True,
+    })
