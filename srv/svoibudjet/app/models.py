@@ -52,7 +52,7 @@ class Item(models.Model):
 
 class QRData(models.Model):
     check_model = models.ForeignKey(Check, on_delete=models.SET_NULL, null=True)
-    qr_string = models.CharField(max_length=255, null=False)
+    qr_string = models.CharField(max_length=255, null=False, unique=True)
     is_valid = models.BooleanField(default=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(null=False, auto_now=True)
