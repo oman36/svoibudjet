@@ -103,6 +103,12 @@ def add(request):
 
 def qr_strings(request):
     queryset = QRData.objects.order_by('-created_at')
+
+    if request.GET.get('failed_only', False):
+        queryset = queryset.filter(check_model_id__isnull=True)
+    elif request.GET.get('invalid_only', False):
+        queryset = queryset.filter(is_valid=False)
+
     paginator = Paginator(queryset, request.GET.get('per-page', 10))
     try:
         strings = paginator.page(request.GET.get('page', 1))
