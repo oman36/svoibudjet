@@ -9,11 +9,6 @@
     <link rel="stylesheet" href="{% static 'app/css/bootstrap-grid.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/bootstrap-reboot.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/custom.css' %}"/>
-
-    <script src="{% static 'app/js/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'app/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
 </head>
 
 <body>
@@ -51,6 +46,18 @@
 <div id="content" class="container">
     {% block content %}{% endblock %}
 </div>
-{% block scripts %}{% endblock %}
+
+<script src="{% static 'app/js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'app/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+    var route = {
+        url_name: '{{ request.resolver_match.url_name }}',
+        app_names: [{% for name in request.resolver_match.app_names %}'{{ name }}',{% endfor %}],
+    };
+</script>
+{% block scripts %}
+{% endblock %}
 </body>
 </html>

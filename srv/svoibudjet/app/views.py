@@ -112,4 +112,18 @@ def qr_strings(request):
     return render(request, 'app/qr_strings.html', {
         'strings'   : strings,
         'num_pages': paginator.num_pages,
+        'repr': repr(request.resolver_match),
+    })
+
+
+def delete_qr_string(request, model_id):
+    try:
+        string = QRData.objects.get(id=model_id)
+    except QRData.DoesNotExist:
+        raise Http404()
+
+    string.delete()
+
+    return JsonResponse({
+        'success': True,
     })

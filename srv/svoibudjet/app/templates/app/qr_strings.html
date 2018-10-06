@@ -1,33 +1,41 @@
 {% extends "app/layout.html" %}
+{% load static %}
 {% block content %}
     {% if strings %}
         <div id="qr_strings">
             {% for string in strings %}
-                <div class="card">
+                <div class="card qr_string"  data-id="{{ string.id }}">
                     <div class="card-body">
-                        <div class="row qr_string" data-id="{{ string.id }}">
-                            <div class="col-md-6 col-sm-12" style="overflow: auto;" data-original="{{ string.qr_string }}">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <input type="text" value="{{ string.qr_string }}" style="width: 100%; border: none;">
-                                    <div class="col text-right">
-                                        <div class="btn btn-sm btn-outline-info delete-qr-data  d-none">
-                                            save
+                        <div class="row ">
+                            <div class="col-md-8 col-sm-12">
+                                <form action="">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <input type="text" value="{{ string.qr_string }}"
+                                                   data-original="{{ string.qr_string }}" style="width: 100%; border: none; border-bottom: 1px solid #ccc;"
+                                                   class="qr-string-input">
+                                        </div>
+                                        <div class="col text-right">
+                                            <div class="btn btn-sm btn-outline-info save-qr-data  d-none">
+                                                save
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <hr class="d-md-none">
+                                </form>
+                                <br class="d-md-none">
                             </div>
-                            <div class="col-md-3 col-6 text-{% if string.is_valid %}success{% else %}danger{% endif %}">
+                            <div class="col-md-2 col-6 text-{% if string.is_valid %}success{% else %}danger{% endif %}">
                                 {% if string.is_valid %} Valid {% else %} Not Valid {% endif %}
                             </div>
-                            <div class="col-md-3 col-6 text-right">
-
-                                <div class="btn btn-sm btn-danger delete-qr-data d-none">
-                                    Delete
-                                </div>
+                            <div class="col-md-2 col-6 text-right">
+                                <form class="delete-qr-data"
+                                      action="{% url 'app:delete_qr_string' model_id=string.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger ">
+                                        Delete
+                                    </button>
+                                </form>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </div>
@@ -42,4 +50,7 @@
     {% else %}
         <p>Checks not found.</p>
     {% endif %}
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'app/js/scripts.js' %}"></script>
 {% endblock %}
