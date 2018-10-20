@@ -45,17 +45,18 @@
                 <div class="card-body collapse" id="list{{ product.product__id }}">
                     <ul>
                         <li class="row" style="font-weight: bold; border-bottom: dashed 1px #ccc">
-                            <div class="col-2 ">Цена</div>
-                            <div class="col-2 text-center">Кол-во</div>
-                            <div class="col-2 text-right">Стоимость</div>
-                            <div class="col-6 text-right">Дата</div>
+                            <div class="col-4 col-sm-2">Цена</div>
+                            <div class="col-4 col-sm-2 text-center">Кол-во</div>
+                            <div class="col-4 col-sm-3 text-right">Стоимость</div>
+                            <div class="col-sm-5 d-none d-sm-block text-right">Дата</div>
                         </li>
                         {% for item in product.items %}
                             <li class="row" style="border-bottom: dashed 1px #ccc">
-                                <div class="col-2">{{ item.price }}</div>
-                                <div class="col-2 text-center">{{ item.quantity }}</div>
-                                <div class="col-2 text-right">{{ item.sum }}</div>
-                                <div class="col-6 text-right">{{ item.check_model__date|date:'d/m/Y H:i' }}</div>
+                                <div class="col-4 col-sm-2">{{ item.price }}</div>
+                                <div class="col-4 col-sm-2 text-center">{{ item.quantity }}</div>
+                                <div class="col-4 col-sm-3 text-right">{{ item.sum }}</div>
+                                <div class="col-6 d-sm-none"></div>
+                                <div class="col-6 col-sm-5 text-right">{{ item.check_model__date|date:'d/m/Y H:i' }}</div>
                             </li>
                         {% endfor %}
                     </ul>
