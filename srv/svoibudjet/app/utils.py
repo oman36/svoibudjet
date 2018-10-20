@@ -5,7 +5,8 @@ import re
 from datetime import datetime
 
 from django.conf import settings
-from django.db import transaction
+from django.core.paginator import Paginator
+from django.db import transaction, models
 
 from .models import Check, Item, Shop, Product
 
@@ -50,7 +51,7 @@ def save_check(data, stdout=None):
 
 
 def save_item(check, item_data):
-    item_data['name'] = item_data.get('name', 'unknown_%d' % (Product.objects.filter( shop=check.shop).count() + 1))
+    item_data['name'] = item_data.get('name', 'unknown_%d' % (Product.objects.filter(shop=check.shop).count() + 1))
     product = Product.objects.filter(name=item_data['name'], shop=check.shop).first()
     if not product:
         product = Product()
@@ -92,3 +93,38 @@ def save_json(json_string):
         file.write(json_string)
 
     return json_data
+
+
+def get_products(request):
+    page = request.GET.get('page', 1)
+    queryset = Item.objects\
+        .values('product__id', 'product__name')\
+        .annotate(min_price=models.Min('price'))\
+        .order_by('min_price')
+
+    if 'name' in request.GET:
+        queryset = queryset.filter(product__name__icontains=request.GET['name'].strip())
+
+    paginator = Paginator(queryset, per_page=request.GET.get('per-page', 10))
+
+    products = paginator.page(page)
+
+    for product in products:
+        product['items'] = Item.objects\
+            .filter(product__id=product['product__id'])\
+            .values(
+                'product__shop__name',
+                'product__shop__inn',
+                'price',
+                'sum',
+                'quantity',
+                'check_model__date',
+            )\
+            .order_by('-check_model__date')[:10]
+
+    return {
+        'products': products[:],
+        'num_pages': paginator.num_pages,
+        'count': paginator.count,
+        'page': page,
+    }

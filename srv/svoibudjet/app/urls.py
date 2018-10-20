@@ -11,4 +11,5 @@ urlpatterns = [
     path('qr_strings/', views.qr_strings, name='qr_strings'),
     path('delete_qr_string/<int:model_id>/', views.delete_qr_string, name='delete_qr_string'),
     path('update_qr_string/<int:model_id>/', views.update_qr_string, name='update_qr_string'),
+    path('search_products/', views.search_products, name='search_products'),
 ]

@@ -143,5 +143,12 @@ function alertUnknownError(resoponse) {
                 });
             })
         }
+
+        if (is_route('search_products', 'app')) {
+            var $paginator_form = $('.paginator form');
+            var $product_form = $('#product_form');
+            var name = $('input[name=name]', $product_form).val();
+            $paginator_form.append('<input type="hidden" name="name" value="' + name + '">')
+        }
     });
 })();

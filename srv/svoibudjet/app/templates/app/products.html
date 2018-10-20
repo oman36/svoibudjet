@@ -1,0 +1,78 @@
+{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+    <form action="{% url 'app:search_products'%}" id="product_form">
+        <input type="hidden" name="page" value="{{ request.GET.page|default:1 }}">
+        <input type="text" class="form-control" name="name" value="{{ request.GET.name }}">
+        <br>
+        <input type="submit" class="btn btn-sm btn-info" value="Search">
+    </form>
+    <br>
+    <br>
+    {% if products %}
+        {% for product in products %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6 col-md-6">
+                            {{ product.product__name }}
+                            <hr>
+                            {% with product.items|first as item1 %}
+                                {% if item1.product__shop__name != 'unknown' %}
+                                    {{ item1.product__shop__name }}
+                                {% else %}
+                                    {{ item1.product__shop__inn }}
+                                {% endif %}
+                            {% endwith%}
+                        </div>
+                        <div class="col-6 col-md-2 text-right">
+                            {{ product.min_price}}
+                        </div>
+                        <div class="col-12 col-md-4 text-right">
+                            <div class="btn btn-info btn-sm"
+                                 data-toggle="collapse"
+                                 href="#list{{ product.product__id }}"
+                                 role="button"
+                                 aria-expanded="false"
+                                 aria-controls="collapseExample"
+                            >
+                                Список ({{ product.items|length }})
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body collapse" id="list{{ product.product__id }}">
+                    <ul>
+                        <li class="row" style="font-weight: bold; border-bottom: dashed 1px #ccc">
+                            <div class="col-2 ">Цена</div>
+                            <div class="col-2 text-center">Кол-во</div>
+                            <div class="col-2 text-right">Стоимость</div>
+                            <div class="col-6 text-right">Дата</div>
+                        </li>
+                        {% for item in product.items %}
+                            <li class="row" style="border-bottom: dashed 1px #ccc">
+                                <div class="col-2">{{ item.price }}</div>
+                                <div class="col-2 text-center">{{ item.quantity }}</div>
+                                <div class="col-2 text-right">{{ item.sum }}</div>
+                                <div class="col-6 text-right">{{ item.check_model__date|date:'d/m/Y H:i' }}</div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    {% else %}
+        <p>Products not found.</p>
+    {% endif %}
+
+    {% with 'app:search_products' as page_url  %}
+    {% with request.GET.page|default:1|add:0 as page  %}
+        {% include 'app/paginator.html' %}
+    {% endwith %}
+    {% endwith %}
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'app/js/scripts.js' %}"></script>
+{% endblock %}

@@ -1,13 +1,14 @@
 import logging
 
 from django.core.paginator import Paginator, EmptyPage
+from django.db import models
 from django.forms import model_to_dict
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
 
 from .check_api import API
 from .models import Check, Item, QRData
-from .utils import save_json, save_check
+from .utils import save_json, save_check, get_products
 
 app_name = 'app'
 logger = logging.getLogger('custom_debug')
@@ -22,7 +23,7 @@ def search(request):
         raise Http404()
 
     return render(request, 'app/list.html', {
-        'checks'   : checks,
+        'checks': checks,
         'num_pages': paginator.num_pages,
     })
 
@@ -96,8 +97,8 @@ def add(request):
 
     return JsonResponse({
         'message': 'ok',
-        'check'  : model_to_dict(check),
-        'items'  : list(Item.objects.filter(check_model=check).values())
+        'check': model_to_dict(check),
+        'items': list(Item.objects.filter(check_model=check).values())
     })
 
 
@@ -116,7 +117,7 @@ def qr_strings(request):
         raise Http404()
 
     return render(request, 'app/qr_strings.html', {
-        'strings'   : strings,
+        'strings': strings,
         'num_pages': paginator.num_pages,
         'repr': repr(request.resolver_match),
     })
@@ -158,3 +159,12 @@ def update_qr_string(request, model_id):
     return JsonResponse({
         'success': True,
     })
+
+
+def search_products(request):
+    try:
+        context = get_products(request)
+    except EmptyPage:
+        raise Http404()
+
+    return render(request, 'app/products.html', context)

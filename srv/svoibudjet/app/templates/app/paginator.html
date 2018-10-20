@@ -1,15 +1,28 @@
-<div class="btn-block text-center">
-    {% if page > 2 %}
-        <a class="btn btn-outline-info" href="{% url page_url %}?page={{ page|add:-2 }}">{{ page|add:-2 }}</a>
-    {% endif %}
-    {% if page > 1 %}
-        <a class="btn btn-outline-info" href="{% url page_url %}?page={{ page|add:-1 }}">{{ page|add:-1 }}</a>
-    {% endif %}
-    <span class="btn btn-info" href="{% url page_url %}?page={{ page }}">{{ page }}</span>
-    {% if page < num_pages %}
-        <a class="btn btn-outline-info" href="{% url page_url %}?page={{ page|add:1}}">{{ page|add:1 }}</a>
-    {% endif %}
-    {% if page < num_pages|add:-1 %}
-        <a class="btn btn-outline-info" href="{% url page_url %}?page={{ page|add:2}}">{{ page|add:2 }}</a>
-    {% endif %}
+<div class="btn-block text-center paginator" data-page="{{ page }}" data-num-pages="{{ num_pages }}">
+    <form action="{% url page_url %}">
+        {% if page > 2 %}
+            <input type="submit" name="page" value="1" class="btn btn-outline-info">
+            {% if page > 3 %}
+                <span class="btn btn-outline-info">...</span>
+            {% endif %}
+        {% endif %}
+
+        {% if page > 1 %}
+            <input type="submit" name="page" value="{{ page|add:-1 }}" class="btn btn-outline-info">
+        {% endif %}
+
+        <span class="btn btn-info">{{ page }}</span>
+
+        {% if page < num_pages %}
+            <input type="submit" name="page" value="{{ page|add:1}}" class="btn btn-outline-info">
+        {% endif %}
+
+        {% if page < num_pages|add:-2 %}
+            {% if page < num_pages|add:-3 %}
+                <span class="btn btn-outline-info">...</span>
+            {% endif %}
+            <input type="submit" name="page" value="{{ num_pages }}" class="btn btn-outline-info">
+        {% endif %}
+
+    </form>
 </div>
