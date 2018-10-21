@@ -11,11 +11,22 @@ class Shop(models.Model):
         return self.name
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey('Category', null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(null=False, auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(null=False, auto_now=True)
+
+    def __str__(self):
+        return str(self.name)
+
+
 class Product(models.Model):
     name = models.CharField(max_length=255)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     created_at = models.DateTimeField(null=False, auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(null=False, auto_now=True)
+    category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return '[%s] %s' % (self.shop.name, self.name,)
