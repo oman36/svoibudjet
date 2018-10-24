@@ -1,3 +1,28 @@
 body {
     padding-top: 60px
 }
+
+.jqtree-element {
+    margin: 4px 0;
+}
+
+.jqtree-title {
+    opacity: 0;
+    display: inline-block;
+    width: 0;
+}
+
+.jqtree-toggler + .jqtree-title {
+    display: none;
+}
+
+.jqtree-additional {
+    display: inline-block;
+    text-align: justify;
+    width: calc(100% - 25px);
+}
+
+.jqtree-additional-inner {
+    display: flex;
+    justify-content: space-between;
+}

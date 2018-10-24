@@ -1,0 +1,35 @@
+{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+    <form action="{{ request.path }}" id="category_edit_form" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <div class="alert alert-danger" style="display: none;" role="alert" id="error">Error</div>
+            <div class="alert alert-success" style="display: none;" role="alert" id="success">Saved</div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" name="name" class="form-control" id="name"
+                       aria-describedby="name_help" autocomplete="off"
+                       placeholder="Молочные продукты"
+                       value="{{ category.name }}"
+                >
+            </div>
+            <div class="form-group">
+                <label for="category_select">Parent category</label><br>
+                <div>
+                    <div id="tree1" data-url="
+
+                            {% url 'app:get_combined_categories' %}{% if category.id %}?miss_children_for_id={{ category.id }}{% endif %}"></div>
+                    <input type="hidden" name="parent" value="{{ category.parent_id }}">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                {% if category.id %} Save {% else %} Create {% endif %}
+            </button>
+        </div>
+    </form>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'app/js/tree.jquery.min.js' %}"></script>
+    <script src="{% static 'app/js/scripts.js' %}"></script>
+{% endblock %}

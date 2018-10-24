@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'app/css/bootstrap.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/bootstrap-grid.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/bootstrap-reboot.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'app/css/jqtree.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/custom.css' %}"/>
 </head>
 
@@ -42,6 +43,11 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'app:qr_strings' %}">
                     QR strings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'app:category_list' %}">
+                    Categories
                 </a>
             </li>
         </ul>

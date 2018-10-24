@@ -132,7 +132,7 @@ function alertUnknownError(resoponse) {
                         success: function () {
                             $qrStringInput.data('original', $qrStringInput.val());
                         },
-                        error: function(response) {
+                        error: function (response) {
                             if (response.responseJSON && response.responseJSON.message) {
                                 return alert(response.responseJSON.message)
                             }
@@ -149,6 +149,86 @@ function alertUnknownError(resoponse) {
             var $product_form = $('#product_form');
             var name = $('input[name=name]', $product_form).val();
             $paginator_form.append('<input type="hidden" name="name" value="' + name + '">')
+        }
+
+        if (is_route('category_edit', 'app')) {
+            var $tree = $('#tree1');
+            var $parentIdInput = $('input[name=parent]');
+
+            $tree.tree({
+                onCreateLi: function (node, $li) {
+                    $li.find('.jqtree-element').append(generete_additional_for_tree({node: node}));
+                }
+            });
+            $tree.on('tree.init', function (e) {
+                var node = $tree.tree('getNodeById', $parentIdInput.val() || null);
+                $tree.tree('selectNode', node);
+                $(':focus').blur();
+            });
+
+
+            $tree.on('tree.select', function (e) {
+                if (e.node) {
+                    $parentIdInput.val(e.node.id)
+                } else {
+                    $parentIdInput.val('')
+                }
+            });
+
+            $('#category_edit_form').on('submit', function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                var action = $(this).attr('action');
+                var method = $(this).attr('method');
+
+                var $btn = $(this).find('button').prop('disabled', true);
+                var $error = $('#error').hide();
+                var $success = $('#success').hide();
+                $.ajax({
+                    url: action,
+                    type: method,
+                    data: formData,
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    complete: function () {
+                        $btn.removeAttr('disabled');
+                    },
+                    success: function (data) {
+                        $success.show();
+                        setTimeout(function () {
+                            $success.fadeOut()
+                        }, 1400)
+                    },
+                    error: function (err) {
+                        $error.html(err.responseJSON.message || 'server error').show();
+                    }
+                });
+            });
+        }
+
+        if (is_route('category_list', 'app')) {
+            $('#tree1').tree({
+                onCreateLi: function (node, $li) {
+                    $li.find('.jqtree-element').append(generete_additional_for_tree({node: node}));
+                }
+            });
+        }
+
+        function generete_additional_for_tree(data) {
+            var node = data.node;
+            return '' +
+                '<div class="jqtree-additional">' +
+                '<div class="jqtree-additional-inner">' +
+                '<span class="jqtree-additional__title">' +
+                node.name +
+                '</span>' +
+                '<a href="/category_edit/' + node.id + '/" class="jqtree-additional__edit btn btn-sm btn-success">' +
+                'edit' +
+                '</a>' +
+                '</div>' +
+                '</div>'
         }
     });
 })();

@@ -7,8 +7,9 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render
 
 from .check_api import API
-from .models import Check, Item, QRData
-from .utils import save_json, save_check, get_products
+from .models import Check, Item, QRData, Product, Category
+from .utils import save_json, save_check, get_products, get_combined_categories as util_get_combined_categories
+from .forms import CategoryForm
 
 app_name = 'app'
 logger = logging.getLogger('custom_debug')
@@ -168,3 +169,44 @@ def search_products(request):
         raise Http404()
 
     return render(request, 'app/products.html', context)
+
+
+def category_list(request):
+    return render(request, 'app/category/list.html')
+
+
+def category_edit(request, category_id='new'):
+    try:
+        category = Category() if 'new' == category_id else Category.objects.get(id=category_id)
+    except Product.DoesNotExist:
+        raise Http404()
+
+    if request.method != 'POST':
+        return render(request, 'app/category/edit.html', {
+            'category': category,
+        })
+
+    form = CategoryForm(request.POST, instance=category)
+
+    if not form.is_valid():
+        return form_error_response(form)
+
+    category = form.save()
+
+    return JsonResponse({
+        'message': 'ok',
+        'category': model_to_dict(category)
+    })
+
+
+def form_error_response(form):
+    return JsonResponse({
+        'message': '<br>\n'.join(
+            ['%s: %s' % (field.capitalize().replace('_', ' '), ', '.join(form.errors[field]))
+                for field in form.errors]),
+    }, status=400)
+
+
+def get_combined_categories(request):
+    categories = util_get_combined_categories(request.GET.get('miss_children_for_id', None))
+    return JsonResponse([v for v in categories.values()], safe=False)

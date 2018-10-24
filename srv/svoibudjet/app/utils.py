@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from django.db import transaction, models
 
-from .models import Check, Item, Shop, Product
+from .models import Check, Item, Shop, Product, Category
 
 logger = logging.getLogger('custom_debug')
 
@@ -128,3 +128,34 @@ def get_products(request):
         'count': paginator.count,
         'page': page,
     }
+
+
+def get_combined_categories(pass_id=None):
+    if pass_id is not None:
+        pass_id = int(pass_id)
+
+    categories = dict()
+
+    for category in Category.objects.values():
+        category['id'] = int(category['id'])
+
+        if pass_id == category['id'] or pass_id == int(category['parent_id'] or -1):
+            continue
+
+        if category['id'] in categories:
+            category['children'] = categories[category['id']]['children']
+        else:
+            category['children'] = []
+
+        categories[category['id']] = category
+
+        if category['parent_id'] is None:
+            continue
+
+        parent_id = category['parent_id']
+        if parent_id in categories:
+            categories[parent_id]['children'].append(category)
+        else:
+            categories[parent_id] = {'children': [category]}
+
+    return {id_: c for id_, c in categories.items() if c['parent_id'] is None}
