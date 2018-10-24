@@ -151,7 +151,7 @@ function alertUnknownError(resoponse) {
             $paginator_form.append('<input type="hidden" name="name" value="' + name + '">')
         }
 
-        if (is_route('category_edit', 'app')) {
+        if (is_route('category_edit', 'app') || is_route('category_new', 'app')) {
             var $tree = $('#tree1');
             var $parentIdInput = $('input[name=parent]');
 
