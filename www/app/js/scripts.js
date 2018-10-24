@@ -153,7 +153,7 @@ function alertUnknownError(resoponse) {
 
         if (is_route('category_edit', 'app') || is_route('category_new', 'app')) {
             var $tree = $('#tree1');
-            var $parentIdInput = $('input[name=parent]');
+            var $parentIdInput = $('input[name=parent_id]');
 
             $tree.tree({
                 onCreateLi: function (node, $li) {
