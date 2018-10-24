@@ -208,7 +208,64 @@ function alertUnknownError(resoponse) {
             });
         }
 
-        if (is_route('category_list', 'app')) {
+        if (is_route('product_edit', 'app') || is_route('product_new', 'app')) {
+            var $tree = $('#tree1');
+            var categoryIdInput = $('input[name=category_id]');
+
+            $tree.tree({
+                onCreateLi: function (node, $li) {
+                    $li.find('.jqtree-element').append(generete_additional_for_tree({node: node}));
+                }
+            });
+            $tree.on('tree.init', function (e) {
+                var node = $tree.tree('getNodeById', categoryIdInput.val() || null);
+                $tree.tree('selectNode', node);
+                $(':focus').blur();
+            });
+
+
+            $tree.on('tree.select', function (e) {
+                if (e.node) {
+                    categoryIdInput.val(e.node.id)
+                } else {
+                    categoryIdInput.val('')
+                }
+            });
+
+            $('#product_form').on('submit', function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                var action = $(this).attr('action');
+                var method = $(this).attr('method');
+
+                var $btn = $(this).find('button').prop('disabled', true);
+                var $error = $('#error').hide();
+                var $success = $('#success').hide();
+                $.ajax({
+                    url: action,
+                    type: method,
+                    data: formData,
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    complete: function () {
+                        $btn.removeAttr('disabled');
+                    },
+                    success: function (data) {
+                        $success.show();
+                        setTimeout(function () {
+                            $success.fadeOut()
+                        }, 1400)
+                    },
+                    error: function (err) {
+                        $error.html(err.responseJSON.message || 'server error').show();
+                    }
+                });
+            });
+        }
+
+        if (is_route('category_list', 'app') || is_route('product_edit', 'app')) {
             $('#tree1').tree({
                 onCreateLi: function (node, $li) {
                     $li.find('.jqtree-element').append(generete_additional_for_tree({node: node}));

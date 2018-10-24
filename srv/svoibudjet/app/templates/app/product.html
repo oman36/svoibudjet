@@ -1,0 +1,46 @@
+{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+    <br>
+    <table class="table table">
+        <tbody>
+        <tr>
+            <td>Name</td>
+            <td>{{ product.name }}</td>
+        </tr>
+        <tr>
+            <td>Shop</td>
+            <td>
+                {% if not product.shop.name or product.shop.name == 'unknown' %}
+                    {{ product.shop.inn }}
+                {% else %}
+                    {{ product.shop.name }}
+                {% endif %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-danger" style="display: none;" role="alert" id="error">Error</div>
+    <div class="alert alert-success" style="display: none;" role="alert" id="success">Saved</div>
+    <label for="category_select">Category</label>
+    <form action="{% url 'app:product_edit' product_id=product.id %}" method="POST" id="product_form">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ product.id }}">
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div id="tree1" data-url="{% url 'app:get_combined_categories' %}"></div>
+                <input type="hidden" name="category_id" value="{{ product.category_id }}">
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="d-md-none" style="height: 10px;"></div>
+                <input type="submit" class="btn btn-sm btn-info" value="Save">
+                <a class="btn btn-sm btn-info" href="{% url 'app:category_new' %}">Create</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'app/js/tree.jquery.min.js' %}"></script>
+    <script src="{% static 'app/js/scripts.js' %}"></script>
+{% endblock %}

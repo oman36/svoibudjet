@@ -16,4 +16,6 @@ urlpatterns = [
     path('category_edit/new/', views.category_edit, name='category_new'),
     path('category_list/', views.category_list, name='category_list'),
     path('get_combined_categories/', views.get_combined_categories, name='get_combined_categories'),
+    path('product_edit/<int:product_id>/', views.product_edit, name='product_edit'),
+    path('product_edit/new/', views.product_edit, name='product_new'),
 ]

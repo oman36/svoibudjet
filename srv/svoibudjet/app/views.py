@@ -171,6 +171,37 @@ def search_products(request):
     return render(request, 'app/products.html', context)
 
 
+def product_edit(request, product_id='new'):
+    try:
+        model = Product() if 'new' == product_id else Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        raise Http404()
+
+    if request.method != 'POST':
+        return render(request, 'app/product.html', {
+            'product': model,
+            'categories': util_get_combined_categories(),
+        })
+
+    if 'category_id' not in request.POST:
+        return JsonResponse({
+            'message': 'Category id is required',
+        })
+
+    category_id = request.POST['category_id'] or None
+    if category_id == '':
+        model.category_id = None
+    else:
+        model.category_id = int(category_id)
+
+    model.save()
+
+    return JsonResponse({
+        'message': 'ok',
+        'product': model_to_dict(model),
+    })
+
+
 def category_list(request):
     return render(request, 'app/category/list.html')
 
