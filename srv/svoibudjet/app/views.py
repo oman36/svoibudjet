@@ -1,15 +1,31 @@
 import logging
 
-from django.core.paginator import Paginator, EmptyPage
-from django.db import models
+from django.core.paginator import (
+    Paginator,
+    EmptyPage,
+)
 from django.forms import model_to_dict
-from django.http import Http404, JsonResponse
+from django.http import (
+    Http404,
+    JsonResponse,
+)
 from django.shortcuts import render
 
 from .check_api import API
-from .models import Check, Item, QRData, Product, Category
-from .utils import save_json, save_check, get_products, get_combined_categories as util_get_combined_categories
 from .forms import CategoryForm
+from .models import (
+    Check,
+    Item,
+    QRData,
+    Product,
+    Category,
+)
+from .utils import (
+    save_json,
+    save_check,
+    get_products,
+    get_combined_categories as util_get_combined_categories,
+)
 
 app_name = 'app'
 logger = logging.getLogger('custom_debug')
@@ -48,9 +64,7 @@ def get_qr_data_list(request):
         .values('id', 'check_model__id', 'qr_string', 'created_at', 'is_valid')\
         .order_by('-created_at')[:10]
 
-    return render(request, 'app/parts/qr_data_list.html', {
-        'qr_data_list': qr_data_list,
-    })
+    return JsonResponse(list(qr_data_list), safe=False)
 
 
 def add(request):

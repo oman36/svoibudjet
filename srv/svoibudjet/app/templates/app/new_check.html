@@ -41,9 +41,7 @@
             <th scope="col">Date</th>
         </tr>
         </thead>
-        <tbody id="qr_code_list" data-url="{% url 'app:get_qr_data_list' %}">
-        {% include 'app/parts/qr_data_list.html' %}
-        </tbody>
+        <tbody id="qr_code_list" data-url="{% url 'app:get_qr_data_list' %}"></tbody>
     </table>
     </div>
 {% endblock %}

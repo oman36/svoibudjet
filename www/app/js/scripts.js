@@ -1,5 +1,34 @@
 "use strict";
 
+var Templaters = {
+    qr_data: function (qr_data) {
+        return `
+            <tr class="table-${ qr_data.check_model__id ? 'success' : 'danger'}" data-id="${qr_data.id}">
+                <td>
+                    ${ qr_data.qr_string }
+                </td>
+                <td class="text-${qr_data.is_valid ? 'success' : 'danger'}">
+                    ${ qr_data.is_valid ? 'Valid' : 'Not valid'}
+                </td>
+                <td>${ moment(qr_data.created_at).format('DD/MM/YYYY HH:mm:ss')}</td>
+            </tr>`
+    },
+    additionalForTree: function (data) {
+        var node = data.node;
+        return `
+            <div class="jqtree-additional">
+                <div class="jqtree-additional-inner">
+                    <span class="jqtree-additional__title">
+                        ${node.name} 
+                    </span>
+                    <a href="/category_edit/${node.id}/" class="jqtree-additional__edit btn btn-sm btn-success">
+                        edit
+                    </a>
+                </div>
+            </div>`
+    }
+};
+
 function is_route(url_name, app_name) {
     if (route.url_name !== url_name) {
         return false;
@@ -18,6 +47,12 @@ function alertUnknownError(resoponse) {
 (function () {
     $(document).ready(function () {
         if (is_route('new_check', 'app')) {
+            var get_qr_data_list_html = function (qr_data_list) {
+                return qr_data_list.reduce(function (result, qr_data) {
+                    return result + Templaters.qr_data(qr_data)
+                });
+            };
+
             $('#add_check_form').on('submit', function (e) {
                 e.preventDefault();
                 var formData = new FormData(this);
@@ -61,7 +96,7 @@ function alertUnknownError(resoponse) {
                     $qr_code_progress.data('next', new Date().getTime() + qrUpdateTimeout);
 
                     $.get(url, function (response) {
-                        $list.html(response)
+                        $list.html(get_qr_data_list_html(response))
                     })
                 }
             })();
@@ -157,7 +192,7 @@ function alertUnknownError(resoponse) {
 
             $tree.tree({
                 onCreateLi: function (node, $li) {
-                    $li.find('.jqtree-element').append(generete_additional_for_tree({node: node}));
+                    $li.find('.jqtree-element').append(Templaters.additionalForTree({node: node}));
                 }
             });
             $tree.on('tree.init', function (e) {
@@ -214,7 +249,7 @@ function alertUnknownError(resoponse) {
 
             $tree.tree({
                 onCreateLi: function (node, $li) {
-                    $li.find('.jqtree-element').append(generete_additional_for_tree({node: node}));
+                    $li.find('.jqtree-element').append(Templaters.additionalForTree({node: node}));
                 }
             });
             $tree.on('tree.init', function (e) {
@@ -268,24 +303,9 @@ function alertUnknownError(resoponse) {
         if (is_route('category_list', 'app') || is_route('product_edit', 'app')) {
             $('#tree1').tree({
                 onCreateLi: function (node, $li) {
-                    $li.find('.jqtree-element').append(generete_additional_for_tree({node: node}));
+                    $li.find('.jqtree-element').append(Templaters.additionalForTree({node: node}));
                 }
             });
-        }
-
-        function generete_additional_for_tree(data) {
-            var node = data.node;
-            return '' +
-                '<div class="jqtree-additional">' +
-                '<div class="jqtree-additional-inner">' +
-                '<span class="jqtree-additional__title">' +
-                node.name +
-                '</span>' +
-                '<a href="/category_edit/' + node.id + '/" class="jqtree-additional__edit btn btn-sm btn-success">' +
-                'edit' +
-                '</a>' +
-                '</div>' +
-                '</div>'
         }
     });
 })();
