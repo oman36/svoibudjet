@@ -63,12 +63,14 @@
 <script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'app/js/moment.min.js' %}"></script>
+<script src="{% static 'app/js/tree.jquery.min.js' %}"></script>
 <script>
     var route = {
         url_name: '{{ request.resolver_match.url_name }}',
         app_names: [{% for name in request.resolver_match.app_names %}'{{ name }}',{% endfor %}],
     };
 </script>
+<script src="{% static 'app/js/scripts.js?v1' %}"></script>
 {% block scripts %}
 {% endblock %}
 </body>
