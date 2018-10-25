@@ -1,6 +1,6 @@
+import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
-import logging
 from urllib.parse import parse_qs
 
 import requests
@@ -28,27 +28,27 @@ class API:
         uri = 'v1/inns/*/kkts/*/fss/{fn}/tickets/{fd}'.format(fn=query['fn'], fd=query['i'])
         params = {
             'fiscalSign': query['fp'],
-            'sendToEmail': "no"
+            'sendToEmail': "no",
         }
 
-        response = requests.get(
-            self.__build_url(uri),
-            params=params,
-            headers=self.headers,
-            auth=(self.username, self.password)
-        )
-
         tries = 0
+        url = self.__build_url(uri)
+        response = False
 
         while tries < 5:
             try:
                 response = requests.get(
-                    self.__build_url(uri),
+                    url,
                     params=params,
                     headers=self.headers,
-                    auth=(self.username, self.password)
+                    auth=(self.username, self.password),
+                    timeout=0.5,
                 )
             except ConnectionError:
+                logger.debug('Connection error')
+                return False
+            except TimeoutError:
+                logger.debug('Timeout error')
                 return False
 
             if response.status_code != 202:
@@ -56,7 +56,7 @@ class API:
 
             tries += 1
 
-        if response.status_code != 200:
+        if not response.status_code != 200:
             logger.debug('Returned status code %d with massage: %s' % (response.status_code, response.text))
             return False
 
@@ -67,34 +67,28 @@ class API:
         if None is query:
             return False
 
-        uri = 'v1/ofds/*/inns/*/fss/{fn}/operations/{n}/tickets/{fd}'.format(fn=query['fn'], fd=query['i'], n=query['n'])
-        date = query['t']
+        uri = 'v1/ofds/*/inns/*/fss/{fn}/operations/{n}/tickets/{fd}'.format(fd=query['i'], **query)
         params = {
             'fiscalSign': query['fp'],
-            'sum': int(Decimal(query['s']) * 100)
+            'sum': int(Decimal(query['s']) * 100),
         }
 
-        original_date = datetime(
-            year=int(date[:4]),
-            month=int(date[4:6]),
-            day=int(date[6:8]),
-            hour=int(date[9:11]),
-            minute=int(date[11:13]),
-        )
+        original_date = datetime.strptime(query['t'][:13], '%Y%m%dT%H%M')
 
         # hack. Because provider may save wrong time.
-        dates_list = [
+        dates_list = (
             original_date,
             original_date - timedelta(minutes=1),
             original_date + timedelta(minutes=1)
-        ]
+        )
         for next_date in dates_list:
             params['date'] = next_date.strftime('%Y-%m-%dT%H:%M:00')
             response = requests.get(
                 self.__build_url(uri),
                 params=params,
                 headers=self.headers,
-                auth=(self.username, self.password)
+                auth=(self.username, self.password),
+                timeout=0.5,
             )
 
             if response.status_code == 204:
@@ -102,7 +96,8 @@ class API:
 
         return False
 
-    def __parse_query(self, query_str):
+    @staticmethod
+    def __parse_query(query_str):
         query = {k: v[0] for k, v in parse_qs(query_str).items()}
         if {'i', 'fn', 't', 'fp', 's'} - set(query.keys()):
             logger.debug('invalid query_str: ' + query_str)
