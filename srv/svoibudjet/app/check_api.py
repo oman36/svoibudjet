@@ -56,7 +56,7 @@ class API:
 
             tries += 1
 
-        if not response.status_code != 200:
+        if response.status_code != 200:
             logger.debug('Returned status code %d with massage: %s' % (response.status_code, response.text))
             return False
 
