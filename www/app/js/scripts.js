@@ -50,7 +50,7 @@ function alertUnknownError(resoponse) {
             var get_qr_data_list_html = function (qr_data_list) {
                 return qr_data_list.reduce(function (result, qr_data) {
                     return result + Templaters.qr_data(qr_data)
-                });
+                }, '');
             };
 
             $('#add_check_form').on('submit', function (e) {
